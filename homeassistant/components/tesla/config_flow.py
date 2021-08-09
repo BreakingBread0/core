@@ -156,8 +156,8 @@ async def validate_input(hass: core.HomeAssistant, data):
     try:
         controller = TeslaAPI(
             async_client,
-            email=data[CONF_USERNAME],
-            password=data[CONF_PASSWORD],
+            refresh_token=data[CONF_USERNAME],
+            access_token=data[CONF_PASSWORD],
             update_interval=DEFAULT_SCAN_INTERVAL,
         )
         result = await controller.connect(
@@ -166,8 +166,8 @@ async def validate_input(hass: core.HomeAssistant, data):
         config[CONF_TOKEN] = result["refresh_token"]
         config[CONF_ACCESS_TOKEN] = result["access_token"]
         config[CONF_EXPIRATION] = result[CONF_EXPIRATION]
-        config[CONF_USERNAME] = data[CONF_USERNAME]
-        config[CONF_PASSWORD] = data[CONF_PASSWORD]
+        config[CONF_USERNAME] = result["refresh_token"]
+        config[CONF_PASSWORD] = result["access_token"]
     except IncompleteCredentials as ex:
         _LOGGER.error("Authentication error: %s %s", ex.message, ex)
         raise InvalidAuth() from ex
